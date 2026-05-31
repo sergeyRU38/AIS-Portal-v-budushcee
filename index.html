@@ -22,6 +22,8 @@
         button { background: #3B82F6; border: none; border-radius: 40px; padding: 12px; font-weight: 600; color: white; cursor: pointer; transition: 0.2s; }
         button:hover { background: #2563EB; }
         .message { margin-top: 8px; padding: 10px; border-radius: 28px; text-align: center; font-size: 0.8rem; }
+        .error-message { background: rgba(185,28,28,0.6); }
+        .success-message { background: rgba(59,130,246,0.6); }
         .dash-header { background: rgba(8,12,30,0.85); backdrop-filter: blur(12px); padding: 12px 32px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .logo { font-size: 1.4rem; font-weight: 700; display: flex; gap: 8px; }
         .logo span:first-child { background: #3B82F6; padding: 4px 14px; border-radius: 50px; color: white; }
@@ -41,7 +43,7 @@
         .doc-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #28315A; }
         .btn-sm { background: #2563EB; padding: 6px 16px; border-radius: 30px; font-size: 0.75rem; border: none; color: white; cursor: pointer; }
         .btn-sm:hover { background: #3B82F6; }
-        .delete-account-btn { background: rgba(185, 28, 28, 0.8); margin-top: 20px; }
+        .delete-account-btn { background: rgba(185, 28, 28, 0.8); margin-top: 20px; width: 100%; }
         .delete-account-btn:hover { background: #B91C1C; }
     </style>
 </head>
@@ -49,8 +51,8 @@
 <div id="root"></div>
 
 <script>
-    // === НАСТРОЙКИ GITHUB ===
-    const GITHUB_TOKEN = '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';  // ⚠️ ПОСЛЕ ТЕСТА УДАЛИ ЭТОТ ТОКЕН И СОЗДАЙ НОВЫЙ!
+    // === НАСТРОЙКИ GITHUB (ТОКЕН ОБНОВЛЁН) ===
+    const GITHUB_TOKEN = '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';
     const REPO_OWNER = 'sergeyRU38';
     const REPO_NAME = 'AIS-Portal-v-budushcee';
     const DB_FILE = 'database.json';
@@ -77,6 +79,7 @@
         try {
             const res = await fetch(url, { headers: { 'Authorization': `token ${GITHUB_TOKEN}` } });
             if (res.status === 404) return { users: [] };
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             const content = fromBase64(data.content);
             return JSON.parse(content);
@@ -264,6 +267,7 @@
                 renderDashboard();
             } catch(e) {
                 msgDiv.innerText = e.message;
+                msgDiv.className = 'message error-message';
             }
         };
         
@@ -274,15 +278,18 @@
             const msgDiv = document.getElementById('regMsg');
             if (!name || !email || pwd.length < 6) {
                 msgDiv.innerText = 'Заполните все поля, пароль ≥6';
+                msgDiv.className = 'message error-message';
                 return;
             }
             try {
                 await registerUser(email, pwd, name);
                 msgDiv.innerText = 'Регистрация успешна! Теперь войдите.';
+                msgDiv.className = 'message success-message';
                 switchTab('login');
                 document.getElementById('loginEmail').value = email;
             } catch(e) {
                 msgDiv.innerText = e.message;
+                msgDiv.className = 'message error-message';
             }
         };
     }
@@ -321,7 +328,7 @@
 
         // Профиль
         document.getElementById('section-account').innerHTML = `
-            <div class="section-card"><h2>${currentUser.fullName}</h2><p>${currentUser.email}</p></div>
+            <div class="section-card"><h2>${escapeHtml(currentUser.fullName)}</h2><p>${escapeHtml(currentUser.email)}</p></div>
             <div class="info-grid-new">
                 <div class="section-card">🏫 ЧОУ «Гимназия №3»</div>
                 <div class="section-card">📍 Курская область</div>
@@ -332,7 +339,7 @@
                 <div class="service-tile" id="servJob">💼 Заявление на работу</div>
                 <div class="service-tile" id="servHelp">📞 Помощь</div>
             </div>
-            <button id="deleteAccountBtn" class="delete-account-btn" style="width:100%; margin-top:20px;">🗑️ Удалить аккаунт навсегда</button>
+            <button id="deleteAccountBtn" class="delete-account-btn">🗑️ Удалить аккаунт навсегда</button>
         `;
         document.getElementById('servSpravka')?.addEventListener('click', () => showToast('Справка сформирована (PDF)'));
         document.getElementById('servJob')?.addEventListener('click', () => showToast('Заявка отправлена в кадровый отдел'));
@@ -357,7 +364,7 @@
             const container = document.getElementById('docsList');
             if (container) {
                 const docs = currentUser.documents || [];
-                container.innerHTML = docs.map(d => `<div class="doc-item">📄 ${d.name} <button class="delete-doc-btn btn-sm" data-id="${d.id}">Удалить</button></div>`).join('');
+                container.innerHTML = docs.map(d => `<div class="doc-item">📄 ${escapeHtml(d.name)} <button class="delete-doc-btn btn-sm" data-id="${d.id}">Удалить</button></div>`).join('');
                 document.querySelectorAll('.delete-doc-btn').forEach(btn => btn.onclick = async () => {
                     await deleteDocument(Number(btn.dataset.id));
                     await renderDashboard();
@@ -434,6 +441,16 @@
             sessionStorage.removeItem('portal_user');
             renderAuth();
         };
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
     }
 
     const saved = sessionStorage.getItem('portal_user');
