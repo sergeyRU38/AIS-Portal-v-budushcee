@@ -3,83 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>АИС «Портал в будущее» — Экосистема для педагогов</title>
+    <title>АИС «Портал в будущее» — Личный кабинет педагога</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
         }
 
         body {
-            background: #F1F5F9;
-            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #F4F7FC;
+            color: #1A2C3E;
+            line-height: 1.4;
         }
 
-        /* Auth styles */
+        /* Контейнер авторизации (без изменений, но дизайн освежим) */
         .auth-container {
             min-height: 100vh;
-            background: linear-gradient(135deg, #0B132B 0%, #1C2541 100%);
+            background: linear-gradient(145deg, #EFF6FF 0%, #FFFFFF 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .auth-card {
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
             background: white;
-            border-radius: 2rem;
+            border-radius: 32px;
             padding: 2rem;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
         }
 
         .auth-logo {
-            font-size: 2rem;
-            font-weight: 800;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.8rem;
             display: flex;
             align-items: baseline;
-            gap: 6px;
-            margin-bottom: 1.5rem;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .auth-logo span:first-child {
-            background: #FFB347;
-            padding: 4px 12px;
+            background: #2C5F8A;
+            padding: 4px 14px;
             border-radius: 40px;
-            color: #0B132B;
+            color: white;
+            letter-spacing: -0.3px;
         }
 
         .tabs {
             display: flex;
-            gap: 1rem;
-            border-bottom: 2px solid #e2e8f0;
-            margin-bottom: 1.5rem;
+            gap: 1.5rem;
+            border-bottom: 2px solid #E9EEF3;
+            margin-bottom: 1.8rem;
         }
 
         .tab-btn {
             background: none;
             border: none;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             padding: 0.5rem 0;
             cursor: pointer;
-            color: #64748b;
+            color: #6C7F8F;
             transition: 0.2s;
         }
 
         .tab-btn.active {
-            color: #0B132B;
-            border-bottom: 3px solid #FFB347;
+            color: #2C5F8A;
+            border-bottom: 3px solid #2C5F8A;
         }
 
         .form {
             display: none;
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.2rem;
         }
 
         .form.active-form {
@@ -89,341 +92,276 @@
         .input-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 6px;
         }
 
         .input-group label {
             font-weight: 500;
-            color: #1e293b;
             font-size: 0.85rem;
+            color: #2F4858;
         }
 
         .input-group input {
             padding: 12px 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
+            border: 1px solid #CFDFE9;
+            border-radius: 20px;
             font-size: 1rem;
+            background: #FFFFFF;
             transition: 0.2s;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #FFB347;
-            box-shadow: 0 0 0 3px rgba(255, 180, 71, 0.2);
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-            color: #334155;
+            border-color: #2C5F8A;
+            box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.1);
         }
 
         button {
-            background: #0B132B;
+            background: #2C5F8A;
             color: white;
             border: none;
             padding: 12px;
             border-radius: 40px;
             font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: 0.2s;
         }
 
         button:hover {
-            background: #FFB347;
-            color: #0B132B;
-            transform: scale(0.98);
-        }
-
-        .google-btn {
-            background: #DB4437;
-            margin-top: 8px;
-        }
-
-        .google-btn:hover {
-            background: #c5392c;
-            color: white;
-            transform: none;
+            background: #1D4564;
+            transform: translateY(-1px);
         }
 
         .message {
-            margin-top: 0.5rem;
+            margin-top: 8px;
             padding: 10px;
-            border-radius: 40px;
+            border-radius: 28px;
             text-align: center;
             font-size: 0.85rem;
         }
 
         .error-message {
-            background: #fee2e2;
-            color: #b91c1c;
+            background: #FFEFEF;
+            color: #C7362B;
         }
 
         .success-message {
-            background: #dcfce7;
-            color: #166534;
+            background: #E3F7EC;
+            color: #1E6F3F;
         }
 
-        /* Dashboard styles */
-        .top-bar {
-            background: #0B132B;
-            color: white;
+        /* ========== ОСНОВНОЙ КАБИНЕТ (НОВЫЙ ДИЗАЙН) ========== */
+        .app-header {
+            background: white;
+            border-bottom: 1px solid #E2EDF2;
             padding: 0 32px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
-            border-bottom: 1px solid #1E2A4A;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
 
         .logo {
-            font-size: 1.6rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 700;
             display: flex;
+            gap: 6px;
             align-items: baseline;
-            gap: 4px;
         }
 
         .logo span:first-child {
-            background: #FFB347;
-            padding: 4px 10px;
-            border-radius: 30px;
-            color: #0B132B;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 28px;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 16px 0;
-        }
-
-        .nav-links a {
-            color: #e2e8f0;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        .nav-links a:hover {
-            color: #FFB347;
+            background: #2C5F8A;
+            padding: 6px 14px;
+            border-radius: 40px;
+            color: white;
         }
 
         .logout-btn {
-            background: #FFB347;
-            color: #0B132B;
+            background: #EEF3F8;
+            color: #2C5F8A;
             padding: 8px 20px;
-            border-radius: 40px;
+            border-radius: 30px;
+            font-weight: 500;
             cursor: pointer;
-            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #E2EAF1;
         }
 
         .dashboard {
+            max-width: 1400px;
+            margin: 32px auto;
+            padding: 0 24px;
             display: flex;
-            max-width: 1600px;
-            margin: 24px 32px;
-            gap: 28px;
+            gap: 32px;
             flex-wrap: wrap;
         }
 
+        /* Боковое меню — аккуратное */
         .sidebar {
-            width: 260px;
+            flex: 0 0 260px;
             background: white;
-            border-radius: 24px;
-            padding: 20px 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 28px;
+            padding: 20px 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
             height: fit-content;
         }
 
         .sidebar-item {
             padding: 12px 16px;
-            margin: 4px 0;
-            border-radius: 16px;
+            margin: 4px 8px;
+            border-radius: 20px;
             cursor: pointer;
-            transition: 0.2s;
             font-weight: 500;
-            color: #1e293b;
+            color: #2C3E50;
+            transition: 0.2s;
         }
 
         .sidebar-item:hover {
-            background: #F1F5F9;
+            background: #F0F6FA;
         }
 
         .sidebar-item.active {
-            background: #FFB34720;
-            border-left: 4px solid #FFB347;
+            background: #EFF6FF;
+            color: #2C5F8A;
             font-weight: 600;
         }
 
+        /* Контент */
         .content {
             flex: 1;
             background: white;
-            border-radius: 28px;
+            border-radius: 32px;
             padding: 28px 32px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
         }
 
+        /* Карточки, сетки, кнопки */
         .profile-header {
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 24px;
-            margin-bottom: 32px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #eef2ff;
+            align-items: center;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #E9F0F5;
         }
 
         .profile-name h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: #1A2C3E;
         }
 
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
-            margin-bottom: 40px;
-            background: #F8FAFE;
-            padding: 20px;
+            margin-bottom: 36px;
+        }
+
+        .info-card {
+            background: #F9FCFE;
+            padding: 18px 20px;
             border-radius: 24px;
+            border: 1px solid #E9F0F5;
         }
 
         .info-label {
             font-weight: 600;
-            color: #1e293b;
+            color: #2F4858;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
         }
 
         .edit-link {
-            color: #FFB347;
-            font-size: 0.8rem;
-            font-weight: 600;
+            color: #2C5F8A;
+            font-size: 0.75rem;
+            font-weight: 500;
             cursor: pointer;
+            margin-left: 12px;
         }
 
         .services-block {
             display: flex;
             gap: 20px;
             flex-wrap: wrap;
-            margin: 32px 0;
+            margin: 28px 0 32px;
         }
 
         .service-card {
-            background: #0B132B;
-            color: white;
+            background: white;
+            border: 1px solid #E2EDF2;
             padding: 20px;
-            border-radius: 20px;
+            border-radius: 24px;
             flex: 1;
             min-width: 180px;
             cursor: pointer;
-            transition: 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
         }
 
         .service-card:hover {
-            background: #FFB347;
-            color: #0B132B;
-            transform: translateY(-4px);
+            border-color: #2C5F8A;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px -12px rgba(44, 95, 138, 0.2);
         }
 
-        .vacancy-list,
-        .notification-list {
-            margin-top: 20px;
-        }
-
-        .vacancy-item,
-        .notification-item {
-            background: #F8FAFE;
-            padding: 16px;
+        .vacancy-item, .notification-item {
+            background: #F9FCFE;
             border-radius: 20px;
+            padding: 16px 20px;
             margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #FFB347;
-            color: #FFB347;
-        }
-
-        .search-input {
-            padding: 10px 16px;
-            border-radius: 30px;
-            border: 1px solid #cbd5e1;
-            width: 100%;
-            max-width: 300px;
-            margin-bottom: 20px;
+            border: 1px solid #E9F0F5;
         }
 
         .twofa-panel {
-            background: #F1F5F9;
-            padding: 20px;
-            border-radius: 20px;
+            background: #F9FCFE;
+            padding: 24px;
+            border-radius: 24px;
             margin: 20px 0;
-        }
-
-        .inline-code {
-            background: #0B132B;
-            color: #FFB347;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-family: monospace;
-            display: inline-block;
-        }
-
-        .hidden-section {
-            display: none;
-        }
-
-        .document-list {
-            margin-top: 20px;
+            border: 1px solid #E9F0F5;
         }
 
         .document-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 14px 0;
+            border-bottom: 1px solid #E9F0F5;
         }
 
-        .modal {
+        .btn-small {
+            background: #EFF6FF;
+            color: #2C5F8A;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+        }
+
+        .btn-small:hover {
+            background: #E2EAF1;
+        }
+
+        .hidden-section {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
         }
 
-        .modal-content {
-            background: white;
-            padding: 24px;
-            border-radius: 24px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        @media (max-width: 800px) {
+        @media (max-width: 780px) {
             .dashboard {
-                margin: 16px;
+                flex-direction: column;
             }
-
             .sidebar {
-                width: 100%;
-            }
-
-            .service-card {
-                width: 100%;
+                flex: auto;
             }
         }
     </style>
@@ -432,34 +370,33 @@
 <div id="app"></div>
 
 <script>
-    // ========== ХРАНИЛИЩЕ ДАННЫХ (localStorage) ==========
+    // ---------- РАБОТА С ДАННЫМИ (localStorage) ----------
     let currentUser = null;
 
     function getUsers() {
-        const users = localStorage.getItem('ais_users');
+        const users = localStorage.getItem('ais_users_new');
         return users ? JSON.parse(users) : [];
     }
 
     function saveUsers(users) {
-        localStorage.setItem('ais_users', JSON.stringify(users));
+        localStorage.setItem('ais_users_new', JSON.stringify(users));
     }
 
     function getCurrentSession() {
-        const session = localStorage.getItem('ais_current_user');
+        const session = localStorage.getItem('ais_current_session');
         return session ? JSON.parse(session) : null;
     }
 
     function setCurrentSession(user) {
-        localStorage.setItem('ais_current_user', JSON.stringify(user));
+        localStorage.setItem('ais_current_session', JSON.stringify(user));
         currentUser = user;
     }
 
     function clearSession() {
-        localStorage.removeItem('ais_current_user');
+        localStorage.removeItem('ais_current_session');
         currentUser = null;
     }
 
-    // Документы пользователя
     function getUserDocuments(userId) {
         const docs = localStorage.getItem(`ais_docs_${userId}`);
         return docs ? JSON.parse(docs) : [];
@@ -477,12 +414,9 @@
         localStorage.setItem(`ais_docs_${userId}`, JSON.stringify(docs));
     }
 
-    // Регистрация
     function register(email, password, fullName) {
         const users = getUsers();
-        if (users.find(u => u.email === email)) {
-            return { success: false, error: "Такой пользователь уже существует" };
-        }
+        if (users.find(u => u.email === email)) return { success: false, error: "Пользователь уже существует" };
         const newUser = {
             id: Date.now(),
             email,
@@ -496,7 +430,6 @@
         return { success: true };
     }
 
-    // Вход
     function login(email, password) {
         const users = getUsers();
         const user = users.find(u => u.email === email && u.password === password);
@@ -504,141 +437,60 @@
             setCurrentSession({ id: user.id, email: user.email, fullName: user.fullName, role: user.role });
             return { success: true };
         }
-        return { success: false, error: "Неверный email или пароль" };
+        return { success: false, error: "Неверный логин или пароль" };
     }
 
-    // Смена пароля
     function changePassword(userId, oldPassword, newPassword) {
         const users = getUsers();
-        const userIndex = users.findIndex(u => u.id === userId);
-        if (userIndex === -1) return { success: false, error: "Пользователь не найден" };
-        if (users[userIndex].password !== oldPassword) return { success: false, error: "Неверный текущий пароль" };
-        users[userIndex].password = newPassword;
+        const idx = users.findIndex(u => u.id === userId);
+        if (idx === -1) return { success: false, error: "Пользователь не найден" };
+        if (users[idx].password !== oldPassword) return { success: false, error: "Старый пароль неверен" };
+        users[idx].password = newPassword;
         saveUsers(users);
         return { success: true, message: "Пароль успешно изменён" };
     }
 
-    // ========== ОТРИСОВКА ==========
-    function renderAuth() {
-        document.getElementById('app').innerHTML = `
-            <div class="auth-container">
-                <div class="auth-card">
-                    <div class="auth-logo">
-                        <span>АИС</span>
-                        <span>«Портал в будущее»</span>
-                    </div>
-                    <div class="tabs">
-                        <button class="tab-btn active" data-tab="login">Вход</button>
-                        <button class="tab-btn" data-tab="register">Регистрация</button>
-                    </div>
-                    <div id="loginForm" class="form active-form">
-                        <div class="input-group"><label>📧 Email</label><input type="email" id="loginEmail" placeholder="teacher@example.com"></div>
-                        <div class="input-group"><label>🔒 Пароль</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
-                        <button id="doLoginBtn">Войти</button>
-                        <button class="google-btn" id="googleLoginBtn">Войти через Google (демо)</button>
-                        <div style="text-align:center; margin-top:8px;"><a href="#" id="forgotPasswordLink" style="color:#FFB347;">Забыли пароль?</a></div>
-                        <div id="loginMessage" class="message"></div>
-                    </div>
-                    <div id="registerForm" class="form">
-                        <div class="input-group"><label>👤 Полное имя</label><input type="text" id="regName" placeholder="Иванова Анна Петровна"></div>
-                        <div class="input-group"><label>📧 Email</label><input type="email" id="regEmail" placeholder="teacher@pedid.ru"></div>
-                        <div class="input-group"><label>🔑 Пароль (мин. 6 символов)</label><input type="password" id="regPassword"></div>
-                        <div class="checkbox-group"><input type="checkbox" id="agreeData"> <label>Я согласен на обработку персональных данных</label></div>
-                        <button id="doRegisterBtn">Зарегистрироваться</button>
-                        <div id="regMessage" class="message"></div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.getAttribute('data-tab');
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById('loginForm').classList.toggle('active-form', tab === 'login');
-                document.getElementById('registerForm').classList.toggle('active-form', tab === 'register');
-            });
-        });
-
-        document.getElementById('doLoginBtn').addEventListener('click', () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            const msgDiv = document.getElementById('loginMessage');
-            const res = login(email, password);
-            if (res.success) {
-                msgDiv.className = 'message success-message';
-                msgDiv.innerText = 'Вход выполнен!';
-                setTimeout(() => renderDashboard(), 1000);
-            } else {
-                msgDiv.className = 'message error-message';
-                msgDiv.innerText = res.error;
-            }
-        });
-
-        document.getElementById('googleLoginBtn').addEventListener('click', () => {
-            alert('Демо-режим: войдите как test@pedid.ru / 123456');
-        });
-
-        document.getElementById('doRegisterBtn').addEventListener('click', () => {
-            const fullName = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value.trim();
-            const agree = document.getElementById('agreeData').checked;
-            const msgDiv = document.getElementById('regMessage');
-            if (!fullName || !email || !password) {
-                msgDiv.className = 'message error-message';
-                msgDiv.innerText = 'Заполните все поля';
-                return;
-            }
-            if (password.length < 6) {
-                msgDiv.className = 'message error-message';
-                msgDiv.innerText = 'Пароль минимум 6 символов';
-                return;
-            }
-            if (!agree) {
-                msgDiv.className = 'message error-message';
-                msgDiv.innerText = 'Согласие на обработку данных обязательно';
-                return;
-            }
-            const res = register(email, password, fullName);
-            if (res.success) {
-                msgDiv.className = 'message success-message';
-                msgDiv.innerText = 'Регистрация успешна! Теперь войдите.';
-                document.querySelector('.tab-btn[data-tab="login"]').click();
-                document.getElementById('loginEmail').value = email;
-            } else {
-                msgDiv.className = 'message error-message';
-                msgDiv.innerText = res.error;
-            }
-        });
-
-        document.getElementById('forgotPasswordLink').addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('Демо-режим: для восстановления пароля обратитесь к администратору. По умолчанию: test@pedid.ru / 123456');
-        });
+    // ---------- UI ФУНКЦИИ (рабочие кнопки) ----------
+    function showToast(msg, isError = false) {
+        const toast = document.createElement('div');
+        toast.innerText = msg;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.backgroundColor = isError ? '#C7362B' : '#2C5F8A';
+        toast.style.color = 'white';
+        toast.style.padding = '10px 24px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontSize = '0.9rem';
+        toast.style.zIndex = '9999';
+        toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2500);
     }
 
     function showChangePasswordModal() {
         const modal = document.createElement('div');
         modal.className = 'modal';
-        modal.style.cssText = 'display:flex; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;';
+        modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; z-index:1000;';
         modal.innerHTML = `
-            <div style="background:white; padding:24px; border-radius:24px; max-width:500px; width:90%;">
-                <h3>Смена пароля</h3>
-                <div class="input-group"><label>Старый пароль</label><input type="password" id="oldPwd"></div>
-                <div class="input-group"><label>Новый пароль</label><input type="password" id="newPwd"></div>
-                <button id="changePwdBtn">Сменить пароль</button>
-                <div id="changePwdMessage" class="message"></div>
-                <button id="closePwdModal" style="background:#ccc; margin-top:8px;">Закрыть</button>
+            <div style="background:white; border-radius:32px; padding:28px; max-width:420px; width:90%;">
+                <h3 style="margin-bottom:20px;">Смена пароля</h3>
+                <div class="input-group"><label>Текущий пароль</label><input type="password" id="modalOldPwd"></div>
+                <div class="input-group"><label>Новый пароль</label><input type="password" id="modalNewPwd"></div>
+                <button id="modalConfirmBtn" style="margin-top:16px;">Сменить</button>
+                <button id="modalCloseBtn" style="background:#E2EAF1; color:#1A2C3E; margin-top:12px;">Отмена</button>
+                <div id="modalMessage" class="message"></div>
             </div>
         `;
         document.body.appendChild(modal);
-        document.getElementById('changePwdBtn').addEventListener('click', () => {
-            const oldPassword = document.getElementById('oldPwd').value;
-            const newPassword = document.getElementById('newPwd').value;
-            const res = changePassword(currentUser.id, oldPassword, newPassword);
-            const msgDiv = document.getElementById('changePwdMessage');
+        const confirmBtn = modal.querySelector('#modalConfirmBtn');
+        const closeBtn = modal.querySelector('#modalCloseBtn');
+        confirmBtn.onclick = () => {
+            const oldPwd = modal.querySelector('#modalOldPwd').value;
+            const newPwd = modal.querySelector('#modalNewPwd').value;
+            const res = changePassword(currentUser.id, oldPwd, newPwd);
+            const msgDiv = modal.querySelector('#modalMessage');
             if (res.success) {
                 msgDiv.className = 'message success-message';
                 msgDiv.innerText = res.message;
@@ -647,21 +499,15 @@
                 msgDiv.className = 'message error-message';
                 msgDiv.innerText = res.error;
             }
-        });
-        document.getElementById('closePwdModal').addEventListener('click', () => modal.remove());
+        };
+        closeBtn.onclick = () => modal.remove();
     }
 
     function uploadDocument(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const doc = {
-                    name: file.name,
-                    type: file.type,
-                    size: file.size,
-                    data: e.target.result,
-                    uploadedAt: new Date().toISOString()
-                };
+                const doc = { name: file.name, type: file.type, size: file.size, data: e.target.result };
                 saveUserDocument(currentUser.id, doc);
                 resolve({ success: true });
             };
@@ -669,20 +515,84 @@
         });
     }
 
+    // ---------- ОТРИСОВКА КАБИНЕТА (убраны лишние вкладки, 2FA, исправлены кнопки) ----------
+    function renderAuth() {
+        document.getElementById('app').innerHTML = `
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-logo"><span>АИС</span><span>«Портал в будущее»</span></div>
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="login">Вход</button>
+                        <button class="tab-btn" data-tab="register">Регистрация</button>
+                    </div>
+                    <div id="loginForm" class="form active-form">
+                        <div class="input-group"><label>Электронная почта</label><input type="email" id="loginEmail" placeholder="teacher@school.ru"></div>
+                        <div class="input-group"><label>Пароль</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+                        <button id="doLoginBtn">Войти</button>
+                        <div id="loginMessage" class="message"></div>
+                    </div>
+                    <div id="registerForm" class="form">
+                        <div class="input-group"><label>Полное имя</label><input type="text" id="regName" placeholder="Иванова Анна Петровна"></div>
+                        <div class="input-group"><label>Email</label><input type="email" id="regEmail" placeholder="teacher@pedid.ru"></div>
+                        <div class="input-group"><label>Пароль (от 6 символов)</label><input type="password" id="regPassword"></div>
+                        <div class="checkbox-group" style="display:flex; gap:10px; align-items:center;"><input type="checkbox" id="agreeData"> <label>Я согласен на обработку данных</label></div>
+                        <button id="doRegisterBtn">Зарегистрироваться</button>
+                        <div id="regMessage" class="message"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        // логика вкладок и кнопок (полностью рабочая, как раньше)
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                const tab = btn.getAttribute('data-tab');
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('loginForm').classList.toggle('active-form', tab === 'login');
+                document.getElementById('registerForm').classList.toggle('active-form', tab === 'register');
+            };
+        });
+        document.getElementById('doLoginBtn').onclick = () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pwd = document.getElementById('loginPassword').value.trim();
+            const res = login(email, pwd);
+            const msg = document.getElementById('loginMessage');
+            if (res.success) {
+                msg.className = 'message success-message';
+                msg.innerText = 'Успешный вход!';
+                setTimeout(() => renderDashboard(), 1000);
+            } else {
+                msg.className = 'message error-message';
+                msg.innerText = res.error;
+            }
+        };
+        document.getElementById('doRegisterBtn').onclick = () => {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pwd = document.getElementById('regPassword').value.trim();
+            const agree = document.getElementById('agreeData').checked;
+            const msg = document.getElementById('regMessage');
+            if (!name || !email || !pwd) return msg.innerText = 'Заполните все поля', msg.className='message error-message';
+            if (pwd.length < 6) return msg.innerText = 'Пароль ≥ 6 символов', msg.className='message error-message';
+            if (!agree) return msg.innerText = 'Подтвердите согласие', msg.className='message error-message';
+            const res = register(email, pwd, name);
+            if (res.success) {
+                msg.className = 'message success-message';
+                msg.innerText = 'Регистрация успешна! Войдите.';
+                document.querySelector('.tab-btn[data-tab="login"]').click();
+                document.getElementById('loginEmail').value = email;
+            } else {
+                msg.className = 'message error-message';
+                msg.innerText = res.error;
+            }
+        };
+    }
+
     function renderDashboard() {
         document.getElementById('app').innerHTML = `
             <div>
-                <div class="top-bar">
-                    <div class="logo">
-                        <span>АИС</span>
-                        <span>«Портал в будущее»</span>
-                    </div>
-                    <div class="nav-links">
-                        <a data-topnav="services">Услуги</a>
-                        <a data-topnav="documents">Документы</a>
-                        <a data-topnav="payments">Платежи</a>
-                        <a data-topnav="help">Помощь</a>
-                    </div>
+                <div class="app-header">
+                    <div class="logo"><span>АИС</span><span>«Портал в будущее»</span></div>
                     <div class="logout-btn" id="logoutBtn">Выйти</div>
                 </div>
                 <div class="dashboard">
@@ -710,104 +620,103 @@
             </div>
         `;
 
-        // Account
+        // --- Учётная запись
         document.getElementById('section-account').innerHTML = `
-            <div class="profile-header"><div class="profile-name"><h2>${currentUser.fullName}</h2><p>ID: ${currentUser.id} · ${currentUser.role === 'admin' ? 'Администратор' : 'Педагог'}</p></div></div>
-            <div class="info-grid"><div><div class="info-label">📧 Email</div><div>${currentUser.email}</div></div><div><div class="info-label">👤 Роль</div><div>${currentUser.role}</div></div><div><div class="info-label">🏠 Адрес</div><div>Ангарск, ул. Ленина 12 <span class="edit-link">ИЗМЕНИТЬ</span></div></div></div>
-            <h3>Доступные услуги</h3>
-            <div class="services-block"><div class="service-card"><h4>📄 Справки</h4><p>О портфолио и трудовой книжке</p></div><div class="service-card"><h4>💼 Трудоустройство</h4><p>Заявление на приём</p></div><div class="service-card"><h4>🚪 Увольнение</h4><p>Подать заявление</p></div></div>
+            <div class="profile-header"><div class="profile-name"><h2>${currentUser.fullName}</h2><p>ID педагога · ${currentUser.role === 'admin' ? 'Администратор' : 'Учитель'}</p></div></div>
+            <div class="info-grid">
+                <div class="info-card"><div class="info-label">📧 Электронная почта</div><div>${currentUser.email} <span class="edit-link" id="editEmailBtn">Изменить</span></div></div>
+                <div class="info-card"><div class="info-label">🏫 Основное место работы</div><div>ЧОУ «Гимназия №3» <span class="edit-link" id="editSchoolBtn">Изменить</span></div></div>
+                <div class="info-card"><div class="info-label">📍 Регион</div><div>Курская область <span class="edit-link" id="editRegionBtn">Изменить</span></div></div>
+            </div>
+            <h3>Доступные сервисы</h3>
+            <div class="services-block">
+                <div class="service-card" id="serviceHelpCard"><h4>📋 Справка о портфолио</h4><p>Электронная выписка</p></div>
+                <div class="service-card" id="serviceJobCard"><h4>💼 Трудоустройство</h4><p>Подать заявление</p></div>
+                <div class="service-card" id="serviceVacCard"><h4>📢 Вакансии</h4><p>Поиск работы в регионе</p></div>
+            </div>
         `;
+        document.getElementById('editEmailBtn')?.addEventListener('click', () => showToast('Функция изменения почты будет доступна в следующей версии'));
+        document.getElementById('editSchoolBtn')?.addEventListener('click', () => showToast('Вы можете сменить школу через раздел "Моя школа"'));
+        document.getElementById('editRegionBtn')?.addEventListener('click', () => showToast('Регион можно изменить в настройках профиля'));
+        document.getElementById('serviceHelpCard')?.addEventListener('click', () => showToast('Справка сформирована. Скачать PDF'));
+        document.getElementById('serviceJobCard')?.addEventListener('click', () => showToast('Открыта форма заявления на трудоустройство'));
+        document.getElementById('serviceVacCard')?.addEventListener('click', () => { document.querySelector('.sidebar-item[data-section="vacancies"]').click(); });
 
-        // Security
+        // --- Безопасность (только смена пароля)
         document.getElementById('section-security').innerHTML = `
             <h2>🔐 Безопасность</h2>
-            <div class="twofa-panel"><h3>Сменить пароль</h3><button id="changePwdBtn">Сменить пароль</button></div>
-            <div class="twofa-panel"><h3>2FA и бот Иннокентий</h3><div class="inline-code">Код: ${currentUser.id}ID213</div><button class="bot-btn">Написать Иннокентию</button></div>
+            <div class="twofa-panel"><h3>Сменить пароль</h3><p>Регулярная смена пароля повышает безопасность.</p><button id="changePwdBtn">Изменить пароль</button></div>
         `;
         document.getElementById('changePwdBtn')?.addEventListener('click', showChangePasswordModal);
 
-        // My school
-        document.getElementById('section-myschool').innerHTML = `<h2>🏫 Моя школа</h2><p>ЧОУ «Гимназия №3» · Учитель</p><button>Перейти к ЭлЖур</button>`;
+        // --- Моя школа
+        document.getElementById('section-myschool').innerHTML = `
+            <h2>🏫 Моя школа</h2>
+            <div class="info-card"><strong>ЧОУ «Гимназия №3»</strong><br>Должность: учитель (русский язык и литература)<br>Классное руководство: 7 «А»<br>Стаж в организации: 2 года</div>
+            <button id="schoolJournalBtn" style="margin-top:20px;">Перейти к электронному журналу</button>
+        `;
+        document.getElementById('schoolJournalBtn')?.addEventListener('click', () => showToast('Открыт демо-доступ к ЭлЖур'));
 
-        // Documents
+        // --- Документы (загрузка)
         document.getElementById('section-docs').innerHTML = `
             <h2>📂 Мои документы</h2>
             <input type="file" id="docUpload" accept=".pdf,.doc,.docx,.jpg,.png">
             <button id="uploadDocBtn">Загрузить документ</button>
             <div id="documentsList" class="document-list"></div>
         `;
-
-        function refreshDocs() {
+        const refreshDocs = () => {
             const docs = getUserDocuments(currentUser.id);
-            const listDiv = document.getElementById('documentsList');
-            if (listDiv) {
-                listDiv.innerHTML = docs.map(doc => `
-                    <div class="document-item">
-                        <span>📄 ${doc.name}</span>
-                        <div><button class="delete-doc" data-id="${doc.id}" style="background:#dc2626; padding:4px 12px;">Удалить</button></div>
-                    </div>
-                `).join('');
-                document.querySelectorAll('.delete-doc').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        deleteUserDocument(currentUser.id, parseInt(btn.getAttribute('data-id')));
-                        refreshDocs();
-                    });
-                });
-            }
-        }
+            const container = document.getElementById('documentsList');
+            if (container) container.innerHTML = docs.map(d => `<div class="document-item"><span>📄 ${d.name}</span><button class="delete-doc btn-small" data-id="${d.id}">Удалить</button></div>`).join('');
+            document.querySelectorAll('.delete-doc').forEach(btn => btn.addEventListener('click', (e) => { deleteUserDocument(currentUser.id, +btn.dataset.id); refreshDocs(); }));
+        };
         document.getElementById('uploadDocBtn')?.addEventListener('click', async () => {
             const file = document.getElementById('docUpload').files[0];
-            if (file) {
-                await uploadDocument(file);
-                refreshDocs();
-            }
+            if (file) { await uploadDocument(file); refreshDocs(); showToast(`Файл "${file.name}" загружен`); }
         });
         refreshDocs();
 
-        // Vacancies
-        document.getElementById('section-vacancies').innerHTML = `<h2>📌 Вакансии (45)</h2><div class="vacancy-list"><div class="vacancy-item">ЧОУ «Гимназия №4» — Учитель <button>Откликнуться</button></div><div class="vacancy-item">ЧОУ «СОШ №33» — Учитель ИЗО <button>Откликнуться</button></div></div>`;
+        // --- Вакансии (кнопки отклика)
+        document.getElementById('section-vacancies').innerHTML = `<h2>📌 Актуальные вакансии (45)</h2>
+            <div class="vacancy-item"><div><strong>ЧОУ «Гимназия №4»</strong><br>Учитель технологии</div><button class="respondBtn" data-vacancy="Гимназия №4">Откликнуться</button></div>
+            <div class="vacancy-item"><div><strong>ЧОУ «СОШ №33»</strong><br>Учитель ИЗО и черчения</div><button class="respondBtn" data-vacancy="СОШ №33">Откликнуться</button></div>
+            <div class="vacancy-item"><div><strong>МБОУ Лицей №1</strong><br>Учитель математики (профиль)</div><button class="respondBtn" data-vacancy="Лицей №1">Откликнуться</button></div>`;
+        document.querySelectorAll('.respondBtn').forEach(btn => btn.addEventListener('click', (e) => showToast(`✅ Отклик на вакансию "${btn.dataset.vacancy}" отправлен!`)));
 
-        // Notifications
-        document.getElementById('section-notifications').innerHTML = `<h2>🔔 Уведомления</h2><div class="notification-item">✅ Ваше заявление одобрено (17.05.2026)</div><div class="notification-item">📄 Услуга оказана: Выписка данных</div>`;
+        // --- Уведомления
+        document.getElementById('section-notifications').innerHTML = `<h2>🔔 Уведомления</h2>
+            <div class="notification-item">✅ Заявление на трудоустройство №641 одобрено (17.05.2026)</div>
+            <div class="notification-item">📄 Услуга «Выписка данных» оказана (17.05.2026)</div>
+            <div class="notification-item">📩 Приглашение на вебинар «Цифровые инструменты» (25.05.2026)</div>`;
 
-        // Rating
-        document.getElementById('section-rating').innerHTML = `<h2>⭐ Мой рейтинг</h2><div class="vacancy-item">Нет активных мест работы для отображения рейтинга</div>`;
+        // --- Рейтинг
+        document.getElementById('section-rating').innerHTML = `<h2>⭐ Мой рейтинг</h2><div class="info-card">На основе ваших профессиональных достижений</div><div class="twofa-panel"><strong>Баллы: 142</strong><br>Уровень: «Эксперт»<br><button id="ratingDetailBtn">Подробнее</button></div>`;
+        document.getElementById('ratingDetailBtn')?.addEventListener('click', () => showToast('Рейтинг формируется из портфолио, отзывов и КПК'));
 
-        // Labour
-        document.getElementById('section-labour').innerHTML = `<h2>📘 Цифровая трудовая книжка</h2><div class="vacancy-item">17.05.2026 — н.в. · ЧОУ «Гимназия №3», Учитель</div>`;
+        // --- Трудовая книжка
+        document.getElementById('section-labour').innerHTML = `<h2>📘 Цифровая трудовая книжка</h2>
+            <div class="vacancy-item"><div><strong>17.05.2026 — н.в.</strong><br>ЧОУ «Гимназия №3», учитель</div><button id="downloadLabourBtn" class="btn-small">Скачать выписку</button></div>`;
+        document.getElementById('downloadLabourBtn')?.addEventListener('click', () => showToast('Выписка из трудовой книжки сформирована'));
 
-        // Navigation
+        // навигация и выход
         const sections = ['account', 'security', 'myschool', 'docs', 'vacancies', 'notifications', 'rating', 'labour'];
         const sidebarItems = document.querySelectorAll('.sidebar-item');
         const dynamicDivs = document.querySelectorAll('.dynamic-section');
         function showSection(sectionId) {
             dynamicDivs.forEach(div => div.classList.add('hidden-section'));
-            const target = document.getElementById(`section-${sectionId}`);
-            if (target) target.classList.remove('hidden-section');
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
             sidebarItems.forEach(item => {
                 item.classList.remove('active');
-                if (item.getAttribute('data-section') === sectionId) item.classList.add('active');
+                if (item.dataset.section === sectionId) item.classList.add('active');
             });
         }
-        sidebarItems.forEach(item => {
-            item.addEventListener('click', () => showSection(item.getAttribute('data-section')));
-        });
+        sidebarItems.forEach(item => item.addEventListener('click', () => showSection(item.dataset.section)));
         showSection('account');
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            clearSession();
-            renderAuth();
-        });
+        document.getElementById('logoutBtn').onclick = () => { clearSession(); renderAuth(); };
     }
 
-    // Запуск
     const session = getCurrentSession();
-    if (session) {
-        currentUser = session;
-        renderDashboard();
-    } else {
-        renderAuth();
-    }
+    if (session) { currentUser = session; renderDashboard(); } else { renderAuth(); }
 </script>
 </body>
 </html>
