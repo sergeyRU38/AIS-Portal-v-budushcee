@@ -18,7 +18,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(cors({ origin: `http://localhost:${PORT}`, credentials: true }));
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
@@ -52,15 +52,6 @@ db.serialize(() => {
         file_type TEXT,
         uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(user_id) REFERENCES users(id)
-    )`);
-
-    // Сессии/логи
-    db.run(`CREATE TABLE IF NOT EXISTS user_logs (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        action TEXT,
-        ip TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     // Добавляем админа по умолчанию (пароль: admin123)
@@ -99,7 +90,7 @@ const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: 'http://localhost:3000/auth/google/callback'
+    callbackURL: `http://localhost:${PORT}/auth/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
     db.get('SELECT * FROM users WHERE google_id = ?', [profile.id], async (err, user) => {
         if (user) return done(null, user);
@@ -162,7 +153,7 @@ app.post('/api/logout', (req, res) => {
     res.json({ success: true });
 });
 
-// Смена пароля (с подтверждением старого)
+// Смена пароля
 app.post('/api/change-password', authenticateToken, (req, res) => {
     const { oldPassword, newPassword } = req.body;
     db.get('SELECT * FROM users WHERE id = ?', [req.user.id], (err, user) => {
@@ -176,27 +167,26 @@ app.post('/api/change-password', authenticateToken, (req, res) => {
     });
 });
 
-// Восстановление пароля (генерация токена)
+// Восстановление пароля
 app.post('/api/forgot-password', (req, res) => {
     const { email } = req.body;
     db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
         if (!user) return res.json({ success: true, message: 'Если email существует, инструкция отправлена' });
         const token = Math.random().toString(36).substring(2, 15);
-        const expires = Date.now() + 3600000; // 1 час
+        const expires = Date.now() + 3600000;
         db.run('UPDATE users SET reset_token = ?, reset_expires = ? WHERE id = ?', [token, expires, user.id]);
-        // В реальном проекте отправляем email, сейчас просто возвращаем токен для демо
-        res.json({ success: true, resetToken: token, message: 'Токен для сброса пароля (демо): ' + token });
+        res.json({ success: true, resetToken: token, message: 'Токен для сброса пароля: ' + token });
     });
 });
 
-// Сброс пароля по токену
+// Сброс пароля
 app.post('/api/reset-password', (req, res) => {
     const { token, newPassword } = req.body;
     db.get('SELECT * FROM users WHERE reset_token = ? AND reset_expires > ?', [token, Date.now()], (err, user) => {
-        if (!user) return res.status(400).json({ error: 'Недействительный или истёкший токен' });
+        if (!user) return res.status(400).json({ error: 'Недействительный токен' });
         const hashed = bcrypt.hashSync(newPassword, 10);
         db.run('UPDATE users SET password = ?, reset_token = NULL, reset_expires = NULL WHERE id = ?', [hashed, user.id]);
-        res.json({ success: true, message: 'Пароль успешно сброшен' });
+        res.json({ success: true, message: 'Пароль сброшен' });
     });
 });
 
@@ -211,7 +201,7 @@ app.post('/api/upload-document', authenticateToken, upload.single('document'), (
         });
 });
 
-// Получить документы пользователя
+// Получить документы
 app.get('/api/my-documents', authenticateToken, (req, res) => {
     db.all('SELECT * FROM documents WHERE user_id = ? ORDER BY uploaded_at DESC', [req.user.id], (err, docs) => {
         res.json(docs || []);
@@ -237,34 +227,29 @@ app.delete('/api/delete-document/:id', authenticateToken, (req, res) => {
 });
 
 // ========== АДМИН-ПАНЕЛЬ ==========
-// Получить всех пользователей (только для админа)
 app.get('/api/admin/users', authenticateToken, isAdmin, (req, res) => {
     db.all('SELECT id, email, full_name, role, created_at FROM users', (err, users) => {
         res.json(users);
     });
 });
 
-// Изменить роль пользователя
 app.put('/api/admin/users/:id/role', authenticateToken, isAdmin, (req, res) => {
     const { role } = req.body;
     db.run('UPDATE users SET role = ? WHERE id = ?', [role, req.params.id]);
     res.json({ success: true });
 });
 
-// Удалить пользователя
 app.delete('/api/admin/users/:id', authenticateToken, isAdmin, (req, res) => {
     db.run('DELETE FROM users WHERE id = ?', [req.params.id]);
     res.json({ success: true });
 });
 
-// Получить все документы (админ)
 app.get('/api/admin/documents', authenticateToken, isAdmin, (req, res) => {
     db.all(`SELECT d.*, u.email, u.full_name FROM documents d JOIN users u ON d.user_id = u.id ORDER BY d.uploaded_at DESC`, (err, docs) => {
         res.json(docs);
     });
 });
 
-// Статистика
 app.get('/api/admin/stats', authenticateToken, isAdmin, (req, res) => {
     db.get('SELECT COUNT(*) as total_users FROM users', (err, usersCount) => {
         db.get('SELECT COUNT(*) as total_documents FROM documents', (err, docsCount) => {
@@ -273,15 +258,14 @@ app.get('/api/admin/stats', authenticateToken, isAdmin, (req, res) => {
     });
 });
 
-// ========== GOOGLE AUTH ROUTES ==========
+// Google Auth
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
     const token = jwt.sign({ id: req.user.id, email: req.user.email, role: req.user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.cookie('token', token, { httpOnly: true });
     res.redirect('/');
 });
 
-// Получить текущего пользователя
 app.get('/api/me', authenticateToken, (req, res) => {
     db.get('SELECT id, email, full_name, role FROM users WHERE id = ?', [req.user.id], (err, user) => {
         if (err) return res.status(500).json({ error: 'Ошибка' });
@@ -289,8 +273,7 @@ app.get('/api/me', authenticateToken, (req, res) => {
     });
 });
 
-// Запуск сервера
 app.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен на http://localhost:${PORT}`);
-    console.log(`📁 Админ-панель: войдите как admin@pedid.ru / admin123`);
+    console.log(`🚀 Сервер: http://localhost:${PORT}`);
+    console.log(`👑 Админ: admin@pedid.ru / admin123`);
 });
